@@ -69,3 +69,5 @@ app.get("/api/status/:videoId", async (req,res)=>{
 
 const port = process.env.PORT || 3000;
 app.listen(port, ()=>console.log(`Hakawati AI: http://localhost:${port}`));
+
+
