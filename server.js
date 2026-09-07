@@ -4,7 +4,8 @@ import dotenv from "dotenv";
 dotenv.config();
 const app = express();
 app.use(express.json({limit:"2mb"}));
-app.use(express.static("public"));
+app.use(express.static("public"));app.use(express.static("public"));
+app.get("/", (req, res) => res.sendFile("index.html", { root: "public" }));
 
 const API = "https://api.heygen.com";
 function hgHeaders(){
