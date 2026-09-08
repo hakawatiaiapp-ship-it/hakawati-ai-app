@@ -1,45 +1,100 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>حكواتي AI</title>
-<style>
-body{font-family:Arial;background:#f5f6fa;margin:0;padding:25px}
-.box{max-width:500px;margin:auto;background:white;padding:25px;border-radius:18px}
-h1{text-align:center}
-input,textarea,button{width:100%;box-sizing:border-box;margin:8px 0;padding:14px;font-size:17px}
-textarea{height:120px}
-button{background:#111;color:white;border:0;border-radius:10px}
-#status{text-align:center;margin-top:15px}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>حكواتي AI</title>
+
+  <style>
+    body{
+      font-family:Arial;
+      background:#f5f6fa;
+      margin:0;
+      padding:25px
+    }
+
+    .box{
+      max-width:500px;
+      margin:auto;
+      background:#fff;
+      padding:25px;
+      border-radius:22px
+    }
+
+    h1{text-align:center}
+
+    input,textarea,button{
+      width:100%;
+      box-sizing:border-box;
+      margin-top:12px;
+      padding:14px;
+      font-size:18px
+    }
+
+    textarea{height:120px}
+
+    button{
+      background:#111;
+      color:#fff;
+      border:0;
+      border-radius:10px
+    }
+
+    #status{
+      text-align:center;
+      margin-top:15px;
+      line-height:1.7
+    }
+
+    video{
+      width:100%;
+      margin-top:15px;
+      border-radius:12px
+    }
+  </style>
 </head>
 
 <body>
-<div class="box">
-<h1>🎙️ حكواتي AI</h1>
-<p>حوّل صورتك إلى فيديو يتكلم بالذكاء الاصطناعي</p>
 
-<label>ارفع الصورة</label>
-<input id="photo" type="file" accept="image/*">
+  <div class="box">
 
-<label>اكتب الكلام</label>
-<textarea id="text" placeholder="مثال: مرحبا، أنا أبو زيد..."></textarea>
+    <h1>🎙️ حكواتي AI</h1>
 
-<button id="generate">إنشاء الفيديو 🎬</button>
+    <p>حوّل صورتك إلى فيديو يتكلم بالذكاء الاصطناعي</p>
 
-<div id="status"></div>
-</div>
+    <label>ارفع الصورة</label>
+    <input
+      id="photo"
+      type="file"
+      accept="image/png,image/jpeg"
+    >
 
-<script>
-document.getElementById("generate").onclick = async () => {
-  const photo = document.getElementById("photo").files[0];
-  const text = document.getElementById("text").value.trim();
-  const status = document.getElementById("status");
+    <label>اكتب الكلام</label>
 
-  if (!photo || !text) {
-    status.innerText = "⚠️ اختر صورة واكتب الكلام";
-    return;
-  }
+    <textarea
+      id="text"
+      placeholder="اكتب النص هنا..."
+    ></textarea>
 
-  status.innerText = "⏳ جاري تجهيز الفيديو...";
+    <button id="generate">
+      🎬 إنشاء الفيديو
+    </button>
+
+    <div id="status"></div>
+
+    <video
+      id="video"
+      controls
+      style="display:none"
+    ></video>
+
+  </div>
+
+
+  <script>
+
+    const btn =
+      document.getElementById("generate");
+
+    const statusEl =
+      document.getElement
