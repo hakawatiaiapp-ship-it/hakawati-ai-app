@@ -2,54 +2,75 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>حكواتي AI</title>
 
   <style>
-    body{
-      font-family:Arial;
-      background:#f5f6fa;
-      margin:0;
-      padding:25px
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f6fa;
+      margin: 0;
+      padding: 25px;
     }
 
-    .box{
-      max-width:500px;
-      margin:auto;
-      background:#fff;
-      padding:25px;
-      border-radius:22px
+    .box {
+      max-width: 500px;
+      margin: auto;
+      background: white;
+      padding: 25px;
+      border-radius: 22px;
     }
 
-    h1{text-align:center}
-
-    input,textarea,button{
-      width:100%;
-      box-sizing:border-box;
-      margin-top:12px;
-      padding:14px;
-      font-size:18px
+    h1 {
+      text-align: center;
     }
 
-    textarea{height:120px}
-
-    button{
-      background:#111;
-      color:#fff;
-      border:0;
-      border-radius:10px
+    p {
+      text-align: center;
     }
 
-    #status{
-      text-align:center;
-      margin-top:15px;
-      line-height:1.7
+    label {
+      display: block;
+      margin-top: 18px;
+      font-size: 18px;
     }
 
-    video{
-      width:100%;
-      margin-top:15px;
-      border-radius:12px
+    input,
+    textarea,
+    button {
+      width: 100%;
+      box-sizing: border-box;
+      margin-top: 12px;
+      padding: 14px;
+      font-size: 18px;
+    }
+
+    textarea {
+      height: 120px;
+    }
+
+    button {
+      background: #111;
+      color: white;
+      border: 0;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      opacity: 0.6;
+    }
+
+    #status {
+      text-align: center;
+      margin-top: 18px;
+      line-height: 1.7;
+    }
+
+    video {
+      width: 100%;
+      margin-top: 18px;
+      border-radius: 12px;
     }
   </style>
 </head>
@@ -60,16 +81,23 @@
 
     <h1>🎙️ حكواتي AI</h1>
 
-    <p>حوّل صورتك إلى فيديو يتكلم بالذكاء الاصطناعي</p>
+    <p>
+      حوّل صورتك إلى فيديو يتكلم بالذكاء الاصطناعي
+    </p>
 
-    <label>ارفع الصورة</label>
+    <label for="photo">
+      ارفع الصورة
+    </label>
+
     <input
       id="photo"
       type="file"
       accept="image/png,image/jpeg"
     >
 
-    <label>اكتب الكلام</label>
+    <label for="text">
+      اكتب الكلام
+    </label>
 
     <textarea
       id="text"
@@ -90,11 +118,177 @@
 
   </div>
 
-
   <script>
+    const button = document.getElementById("generate");
+    const photoInput = document.getElementById("photo");
+    const textInput = document.getElementById("text");
+    const statusBox = document.getElementById("status");
+    const video = document.getElementById("video");
 
-    const btn =
-      document.getElementById("generate");
+    function fileToBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
 
-    const statusEl =
-      document.getElement
+        reader.onload = function () {
+          const result = reader.result;
+          const base64 = result.split(",")[1];
+          resolve(base64);
+        };
+
+        reader.onerror = function () {
+          reject(new Error("تعذر قراءة الصورة"));
+        };
+
+        reader.readAsDataURL(file);
+      });
+    }
+
+    button.addEventListener("click", async function () {
+
+      const file = photoInput.files[0];
+      const text = textInput.value.trim();
+
+      if (!file || !text) {
+        statusBox.textContent =
+          "⚠️ اختر صورة واكتب الكلام أولاً";
+        return;
+      }
+
+      button.disabled = true;
+      video.style.display = "none";
+
+      statusBox.textContent =
+        "⏳ جاري رفع الصورة وبدء إنشاء الفيديو...";
+
+      try {
+
+        const imageBase64 =
+          await fileToBase64(file);
+
+        const response =
+          await fetch("/api/generate", {
+            method: "POST",
+
+            headers: {
+              "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify({
+              imageBase64: imageBase64,
+              mimeType: file.type || "image/jpeg",
+              text: text
+            })
+          });
+
+        const data =
+          await response.json();
+
+        if (!response.ok) {
+          throw new Error(
+            data.error ||
+            data.message ||
+            "فشل بدء إنشاء الفيديو"
+          );
+        }
+
+        const videoId =
+          data.videoId ||
+          data.video_id ||
+          data.data?.video_id ||
+          data.data?.id;
+
+        if (!videoId) {
+          throw new Error(
+            "لم يصل معرّف الفيديو من الخادم"
+          );
+        }
+
+        statusBox.textContent =
+          "🎬 الفيديو قيد الإنشاء...";
+
+        const timer =
+          setInterval(async function () {
+
+            try {
+
+              const statusResponse =
+                await fetch(
+                  "/api/status/" +
+                  encodeURIComponent(videoId)
+                );
+
+              const statusData =
+                await statusResponse.json();
+
+              if (!statusResponse.ok) {
+                throw new Error(
+                  statusData.error ||
+                  statusData.message ||
+                  "فشل فحص حالة الفيديو"
+                );
+              }
+
+              const info =
+                statusData.data || statusData;
+
+              if (info.status === "completed") {
+
+                clearInterval(timer);
+
+                const videoUrl =
+                  info.video_url ||
+                  info.url;
+
+                if (!videoUrl) {
+                  throw new Error(
+                    "اكتمل الفيديو لكن الرابط غير موجود"
+                  );
+                }
+
+                video.src = videoUrl;
+                video.style.display = "block";
+
+                statusBox.textContent =
+                  "✅ تم إنشاء الفيديو";
+
+                button.disabled = false;
+
+              } else if (info.status === "failed") {
+
+                clearInterval(timer);
+
+                statusBox.textContent =
+                  "❌ " +
+                  (
+                    info.failure_message ||
+                    "فشل إنشاء الفيديو"
+                  );
+
+                button.disabled = false;
+              }
+
+            } catch (error) {
+
+              clearInterval(timer);
+
+              statusBox.textContent =
+                "❌ " + error.message;
+
+              button.disabled = false;
+            }
+
+          }, 8000);
+
+      } catch (error) {
+
+        statusBox.textContent =
+          "❌ " + error.message;
+
+        button.disabled = false;
+      }
+
+    });
+  </script>
+
+</body>
+</html>
