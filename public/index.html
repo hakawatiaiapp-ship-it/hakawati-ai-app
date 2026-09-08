@@ -247,6 +247,23 @@
 
                 video.src = videoUrl;
                 video.style.display = "block";
+                let downloadBtn = document.getElementById("downloadBtn");
+if (!downloadBtn) {
+  downloadBtn = document.createElement("a");
+  downloadBtn.id = "downloadBtn";
+  downloadBtn.textContent = "⬇️ تنزيل الفيديو";
+  downloadBtn.style.display = "block";
+  downloadBtn.style.marginTop = "15px";
+  downloadBtn.style.padding = "14px";
+  downloadBtn.style.background = "#111";
+  downloadBtn.style.color = "#fff";
+  downloadBtn.style.textAlign = "center";
+  downloadBtn.style.borderRadius = "12px";
+  downloadBtn.style.textDecoration = "none";
+  video.insertAdjacentElement("afterend", downloadBtn);
+}
+downloadBtn.href = videoUrl;
+downloadBtn.download = "hakawati-video.mp4";
 
                 statusBox.textContent =
                   "✅ تم إنشاء الفيديو";
