@@ -1,21 +1,45 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>حكواتي AI</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>حكواتي AI</title>
+<style>
+body{font-family:Arial;background:#f5f6fa;margin:0;padding:25px}
+.box{max-width:500px;margin:auto;background:white;padding:25px;border-radius:18px}
+h1{text-align:center}
+input,textarea,button{width:100%;box-sizing:border-box;margin:8px 0;padding:14px;font-size:17px}
+textarea{height:120px}
+button{background:#111;color:white;border:0;border-radius:10px}
+#status{text-align:center;margin-top:15px}
+</style>
 </head>
+
 <body>
-  <h1>🎙️ حكواتي AI</h1>
-  <h2>حوّل صورتك إلى فيديو يتكلم بالذكاء الاصطناعي</h2>
+<div class="box">
+<h1>🎙️ حكواتي AI</h1>
+<p>حوّل صورتك إلى فيديو يتكلم بالذكاء الاصطناعي</p>
 
-  <p>ارفع الصورة</p>
-  <input type="file" accept="image/*">
+<label>ارفع الصورة</label>
+<input id="photo" type="file" accept="image/*">
 
-  <p>اكتب الكلام</p>
-  <textarea placeholder="اكتب هنا الكلام الذي تريد أن تقوله الشخصية"></textarea>
+<label>اكتب الكلام</label>
+<textarea id="text" placeholder="مثال: مرحبا، أنا أبو زيد..."></textarea>
 
-  <br><br>
-  <button>إنشاء الفيديو</button>
-</body>
-</html>
+<button id="generate">إنشاء الفيديو 🎬</button>
+
+<div id="status"></div>
+</div>
+
+<script>
+document.getElementById("generate").onclick = async () => {
+  const photo = document.getElementById("photo").files[0];
+  const text = document.getElementById("text").value.trim();
+  const status = document.getElementById("status");
+
+  if (!photo || !text) {
+    status.innerText = "⚠️ اختر صورة واكتب الكلام";
+    return;
+  }
+
+  status.innerText = "⏳ جاري تجهيز الفيديو...";
