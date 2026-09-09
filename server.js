@@ -14,7 +14,7 @@ app.get("/", (req, res) => {
 
 app.post("/api/generate", async (req, res) => {
   try {
-    const { imageBase64, mimeType, text, dialect } = req.body;
+    const { imageBase64, mimeType, text, dialect, voice } = req.body;
 
     if (!process.env.HEYGEN_API_KEY) {
       return res.status(500).json({ error: "HEYGEN_API_KEY غير موجود" });
