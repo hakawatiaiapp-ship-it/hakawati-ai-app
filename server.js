@@ -56,7 +56,17 @@ app.post("/api/generate", async (req, res) => {
     if (!assetId) {
       return res.status(500).json({ error: "لم نحصل على asset_id" });
     }
+const localeMap = {
+  syrian: "ar-SY",
+  lebanese: "ar-LB",
+  egyptian: "ar-EG",
+  iraqi: "ar-IQ",
+  gulf: "ar-SA",
+  palestinian: "ar-PS",
+  msa: "ar-SA"
+};
 
+const locale = localeMap[dialect] || "ar-SA";
     // 2) اختيار صوت عربي رجالي
     const voicesResp = await fetch(
     `https://api.heygen.com/v3/voices?language=Arabic&gender=${voice === "female" ? "female" : "male"}&limit=20`,
