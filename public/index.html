@@ -103,7 +103,16 @@
       id="text"
       placeholder="اكتب النص هنا..."
     ></textarea>
-
+<label for="dialect">اختر اللهجة</label>
+<select id="dialect">
+  <option value="syrian">🇸🇾 سورية</option>
+  <option value="lebanese">🇱🇧 لبنانية</option>
+  <option value="egyptian">🇪🇬 مصرية</option>
+  <option value="iraqi">🇮🇶 عراقية</option>
+  <option value="gulf">🇸🇦 خليجية</option>
+  <option value="palestinian">🇵🇸 فلسطينية</option>
+  <option value="msa">📖 فصحى</option>
+</select>
     <button id="generate">
       🎬 إنشاء الفيديو
     </button>
@@ -176,7 +185,8 @@
             body: JSON.stringify({
               imageBase64: imageBase64,
               mimeType: file.type || "image/jpeg",
-              text: text
+              text: text,
+dialect: document.getElementById("dialect").value
             })
           });
 
