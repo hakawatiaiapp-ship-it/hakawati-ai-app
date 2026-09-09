@@ -96,6 +96,9 @@ const locale = localeMap[dialect] || "ar-SA";
         },
         script: text,
         voice_id: voiceId,
+        voice_settings: {
+  locale: locale
+},
         title: "Hakawati AI",
         resolution: "720p",
         aspect_ratio: "auto"
