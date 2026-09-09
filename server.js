@@ -59,7 +59,7 @@ app.post("/api/generate", async (req, res) => {
 
     // 2) اختيار صوت عربي رجالي
     const voicesResp = await fetch(
-      "https://api.heygen.com/v3/voices?language=Arabic&gender=male&limit=1",
+    `https://api.heygen.com/v3/voices?language=Arabic&gender=${voice === "female" ? "female" : "male"}&limit=20`,
       { headers }
     );
 
